@@ -1,7 +1,6 @@
 import numpy as np
 
 
-
 def lsi_similarity(num_docs, documents, query, k):
     # Tokenizacja i zbudowanie zbioru unikalnych słów (słów kluczowych)
     terms = list(set(word for doc in documents for word in doc.split()))
@@ -39,21 +38,23 @@ def lsi_similarity(num_docs, documents, query, k):
 if __name__ == "__main__":
     import sys
 
-    # Czytanie wejścia
+    # Czytanie danych wejściowych
     input_lines = sys.stdin.read().strip().split("\n")
 
     # Liczba dokumentów
-    num_docs = int(input_lines[0])
+    num_docs = int(input_lines[0].strip())
 
     # Dokumenty
-    documents = input_lines[1:num_docs + 1]
+    documents = [line.strip() for line in input_lines[1:num_docs + 1]]
 
     # Zapytanie
-    query = input_lines[num_docs + 1]
+    query = input_lines[num_docs + 1].strip()
 
     # Liczba wymiarów
-    k = int(input_lines[num_docs + 2])
+    k = int(input_lines[num_docs + 2].strip())
 
     # Wywołanie funkcji
     similarities = lsi_similarity(num_docs, documents, query, k)
+
+    # Wyświetlenie wyników
     print(similarities)
