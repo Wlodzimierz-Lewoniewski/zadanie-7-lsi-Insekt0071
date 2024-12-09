@@ -1,9 +1,60 @@
-#Przykład otrzymania wartości wprowadzonej przy użyciu funkcji input().
-wyraz=input()
+import numpy as np
 
-#W celu poprawnego działania kodu w ramach GitHub Classroom warto dodatkowo użyć funkcję strip()
-#To pozwoli na usunięcie spacji oraz innych "spacjopodobnych" znaków (tabulacja \t', przejście do nowej linii '\n' lub '\r' etc.) z "głowy" i "ogona" (lewej i prawej części wyrazu).
-wyraz=wyraz.strip()
 
-#Wydruk na ekranie (w konsoli)
-print ('Ten wyraz został wprowadzony:', wyraz)
+def lsi_similarity(num_docs, documents, query, k):
+    # Tokenizacja i zbudowanie zbioru unikalnych słów (słów kluczowych)
+    terms = list(set(word for doc in documents for word in doc.split()))
+
+    # Budowa macierzy term-dokument (incydencji)
+    term_doc_matrix = np.array([[1 if term in doc.split() else 0 for doc in documents] for term in terms])
+
+    # Dekompozycja SVD
+    U, Sigma, VT = np.linalg.svd(term_doc_matrix, full_matrices=False)
+
+    # Redukcja wymiarów
+    U_k = U[:, :k]
+    Sigma_k = np.diag(Sigma[:k])
+    VT_k = VT[:k, :]
+
+    # Macierz dokumentów w zredukowanej przestrzeni
+    reduced_docs = Sigma_k @ VT_k
+
+    # Reprezentacja zapytania w zredukowanej przestrzeni
+    query_vec = np.array([1 if term in query.split() else 0 for term in terms])
+    reduced_query = np.linalg.pinv(Sigma_k) @ U_k.T @ query_vec
+
+    # Obliczenie podobieństw kosinusowych
+    similarities = [
+        np.dot(reduced_query, doc_vec) / (np.linalg.norm(reduced_query) * np.linalg.norm(doc_vec))
+        for doc_vec in reduced_docs.T
+    ]
+
+    # Zaokrąglenie wyników do 2 miejsc po przecinku
+    similarities = [round(sim, 2) for sim in similarities]
+
+    return similarities
+
+
+if __name__ == "__main__":
+    import sys
+
+    # Czytanie wejścia
+    input_lines = sys.stdin.read().strip().split("\n")
+
+    # Liczba dokumentów
+    num_docs = int(input_lines[0])
+
+    # Dokumenty
+    documents = input_lines[1:num_docs + 1]
+
+    # Zapytanie
+    query = input_lines[num_docs + 1]
+
+    # Liczba wymiarów
+    k = int(input_lines[num_docs + 2])
+
+    # Obliczenie podobieństw
+    similarities = lsi_similarity(num_docs, documents, query, k)
+
+    # Wyświetlenie wyniku w oczekiwanym formacie
+    print(similarities)
