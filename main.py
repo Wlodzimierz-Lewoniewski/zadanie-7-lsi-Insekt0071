@@ -1,4 +1,5 @@
 import numpy as np
+import json
 
 
 def lsi_similarity(num_docs, documents, query, k):
@@ -36,25 +37,14 @@ def lsi_similarity(num_docs, documents, query, k):
 
 
 if __name__ == "__main__":
-    import sys
+    # Wczytanie danych wejściowych
+    num_docs = int(input())
+    documents = [input().strip() for _ in range(num_docs)]
+    query = input().strip()
+    k = int(input().strip())
 
-    # Czytanie danych wejściowych
-    input_lines = sys.stdin.read().strip().split("\n")
-
-    # Liczba dokumentów
-    num_docs = int(input_lines[0].strip())
-
-    # Dokumenty
-    documents = [line.strip() for line in input_lines[1:num_docs + 1]]
-
-    # Zapytanie
-    query = input_lines[num_docs + 1].strip()
-
-    # Liczba wymiarów
-    k = int(input_lines[num_docs + 2].strip())
-
-    # Wywołanie funkcji
+    # Obliczenie podobieństw
     similarities = lsi_similarity(num_docs, documents, query, k)
 
-    # Wyświetlenie wyników
-    print(similarities)
+    # Wyjście w formacie JSON
+    print(json.dumps(similarities))
