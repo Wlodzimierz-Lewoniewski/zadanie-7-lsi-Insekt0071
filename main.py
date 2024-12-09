@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.preprocessing import normalize
 
 
 def lsi_similarity(num_docs, documents, query, k):
@@ -53,8 +54,6 @@ if __name__ == "__main__":
     # Liczba wymiarów
     k = int(input_lines[num_docs + 2])
 
-    # Obliczenie podobieństw
+    # Wywołanie funkcji
     similarities = lsi_similarity(num_docs, documents, query, k)
-
-    # Wyświetlenie wyniku w oczekiwanym formacie
     print(similarities)
