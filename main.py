@@ -1,10 +1,15 @@
 import numpy as np
 import json
+import re
 
 
 def lsi_similarity(num_docs, documents, query, k):
-    # Tokenizacja i zbudowanie zbioru unikalnych słów (słów kluczowych)
-    terms = list(set(word for doc in documents for word in doc.split()))
+    # Usunięcie interpunkcji i zbudowanie zbioru unikalnych słów
+    clean_doc = lambda doc: re.sub(r'[^\w\s]', '', doc.lower())
+    documents = [clean_doc(doc) for doc in documents]
+    query = clean_doc(query)
+
+    terms = sorted(set(word for doc in documents for word in doc.split()))
 
     # Budowa macierzy term-dokument (incydencji)
     term_doc_matrix = np.array([[1 if term in doc.split() else 0 for doc in documents] for term in terms])
